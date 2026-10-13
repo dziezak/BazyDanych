@@ -2,6 +2,8 @@ package pl.kornel.rest;
 
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.*;
+import pl.kornel.rest.HdfsStore;
+
 import org.w3c.dom.Element;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -38,6 +40,7 @@ public class ModuleResource {
     public Response create(InputStream is, @Context UriInfo uriInfo) throws Exception {
         Module m = parse(IDS.incrementAndGet(), is);
         STORE.put(m.id(), m);
+        HdfsStore.write(m.id(), m.toXml());                 // zapis do HDFS
         URI location = uriInfo.getAbsolutePathBuilder().path(String.valueOf(m.id())).build();
         return Response.created(location).build();          // 201 + Location
     }
@@ -70,15 +73,18 @@ public class ModuleResource {
     @Consumes(MediaType.APPLICATION_XML)
     public Response put(@PathParam("id") int id, InputStream is) throws Exception {
         boolean existed = STORE.containsKey(id);
-        STORE.put(id, parse(id, is));
+        Module m = parse(id, is);
+        STORE.put(id, m);
+        HdfsStore.write(m.id(), m.toXml());                 // zapis do HDFS
         return existed ? Response.noContent().build() : Response.status(201).build();
     }
 
     // DELETE /modules/{id}
     @DELETE @Path("{id: [0-9]+}")
-    public Response delete(@PathParam("id") int id) {
-        return STORE.remove(id) != null ? Response.noContent().build()
-                                        : Response.status(404).build();
+    public Response delete(@PathParam("id") int id) throws Exception {
+        if (STORE.remove(id) == null) return Response.status(404).build();
+        HdfsStore.delete(id);
+        return Response.noContent().build();
     }
 
     private static Module find(int id) {

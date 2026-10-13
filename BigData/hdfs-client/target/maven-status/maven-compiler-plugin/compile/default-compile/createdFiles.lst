@@ -5,4 +5,5 @@ pl/kornel/rest/Server.class
 pl/kornel/hdfs/ReadFolderClient.class
 pl/kornel/rest/ModuleResource.class
 pl/kornel/rest/ModuleResource$Module.class
+pl/kornel/rest/HdfsStore.class
 pl/kornel/rest/PostModuleClient.class

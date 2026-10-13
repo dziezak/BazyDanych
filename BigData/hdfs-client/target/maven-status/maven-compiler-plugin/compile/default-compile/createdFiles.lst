@@ -1,2 +1,8 @@
+pl/kornel/hdfs/CreateFolderWithNameClient.class
+pl/kornel/hdfs/CreateFolderClient.class
 pl/kornel/hdfs/App.class
+pl/kornel/rest/Server.class
 pl/kornel/hdfs/ReadFolderClient.class
+pl/kornel/rest/ModuleResource.class
+pl/kornel/rest/ModuleResource$Module.class
+pl/kornel/rest/PostModuleClient.class
